@@ -6,8 +6,8 @@ const EditRecipeForm = ({ recipe }) => {
   const [title, setTitle] = useState(recipe.title);
   const [description, setDescription] = useState(recipe.description);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = (event) => {
+    event.preventDefault(); // ✅ This exact line is required
     updateRecipe({ ...recipe, title, description });
   };
 
