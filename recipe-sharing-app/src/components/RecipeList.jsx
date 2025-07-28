@@ -4,10 +4,16 @@ import useRecipeStore from '../recipeStore';
 
 const RecipeList = () => {
   const filteredRecipes = useRecipeStore(state => state.filteredRecipes);
+  const favorites = useRecipeStore(state => state.favorites);
+  const addFavorite = useRecipeStore(state => state.addFavorite);
+  const removeFavorite = useRecipeStore(state => state.removeFavorite);
 
-  if (!filteredRecipes.length) {
-    return <p>No recipes found.</p>;
-  }
+  const toggleFavorite = (id) => {
+    if (favorites.includes(id)) removeFavorite(id);
+    else addFavorite(id);
+  };
+
+  if (!filteredRecipes.length) return <p>No recipes found.</p>;
 
   return (
     <div>
@@ -19,6 +25,9 @@ const RecipeList = () => {
             </Link>
           </h3>
           <p>{recipe.description}</p>
+          <button onClick={() => toggleFavorite(recipe.id)}>
+            {favorites.includes(recipe.id) ? 'Remove from Favorites' : 'Add to Favorites'}
+          </button>
         </div>
       ))}
     </div>
