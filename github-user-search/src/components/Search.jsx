@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { fetchUserData } from '../services/githubService';
 
 const Search = () => {
   const [username, setUsername] = useState('');
@@ -7,7 +8,7 @@ const Search = () => {
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
-    e.preventDefault();  // <---- required for test
+    e.preventDefault();
 
     if (!username) return;
 
@@ -16,16 +17,9 @@ const Search = () => {
     setUserData(null);
 
     try {
-      const response = await fetch(`https://api.github.com/users/${username}`);
-
-      if (response.status === 404) {
-        setNotFound(true);
-      } else {
-        const data = await response.json();
-        setUserData(data);
-      }
+      const data = await fetchUserData(username);
+      setUserData(data);
     } catch (error) {
-      console.error(error);
       setNotFound(true);
     } finally {
       setLoading(false);
@@ -34,7 +28,7 @@ const Search = () => {
 
   return (
     <div className="search-container">
-      <form onSubmit={handleSubmit}> {/* <-- form and onSubmit required */}
+      <form onSubmit={handleSubmit}>
         <input
           type="text"
           value={username}
@@ -46,7 +40,7 @@ const Search = () => {
 
       {loading && <p>Loading...</p>}
 
-      {notFound && <p>Looks like we cant find the user</p>} {/* no apostrophe */}
+      {notFound && <p>Looks like we cant find the user</p>}
 
       {userData && (
         <div className="user-profile">
