@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 
+import { fetchUserData } from '../services/githubService';
+
 const Search = () => {
   const [username, setUsername] = useState('');
   const [userData, setUserData] = useState(null);
@@ -16,14 +18,10 @@ const Search = () => {
     setUserData(null);
 
     try {
-      const response = await fetch(`https://api.github.com/users/${username}`);
+      // Replace the direct fetch call with fetchUserData:
+      const data = await fetchUserData(username);
 
-      if (response.status === 404) {
-        setNotFound(true);
-      } else {
-        const data = await response.json();
-        setUserData(data);
-      }
+      setUserData(data);
     } catch (error) {
       console.error(error);
       setNotFound(true);
