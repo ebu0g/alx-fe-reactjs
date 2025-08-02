@@ -1,23 +1,30 @@
-import axios from 'axios';
+// src/services/githubService.js
 
-const BASE_SEARCH_URL = 'https://api.github.com/search/users';
+const BASE_URL = "https://api.github.com";
 
-export const searchUsers = async ({ username, location, minRepos, page = 1 }) => {
-  const token = import.meta.env.VITE_GITHUB_TOKEN;
-  const headers = token ? { Authorization: `token ${token}` } : {};
+export const searchUsers = async (query) => {
+  try {
+    const response = await fetch(`${BASE_URL}/search/users?q=${query}`);
+    if (!response.ok) {
+      throw new Error("Failed to fetch users");
+    }
+    const data = await response.json();
+    return data.items; // GitHub API returns users under the "items" key
+  } catch (error) {
+    console.error("Error searching users:", error);
+    throw error;
+  }
+};
 
-  // Build the query string
-  let query = '';
-  if (username) query += `${username} `;
-  if (location) query += `location:${location} `;
-  if (minRepos) query += `repos:>=${minRepos} `;
-
-  const params = {
-    q: query.trim(),
-    per_page: 10,
-    page,
-  };
-
-  const response = await axios.get(BASE_SEARCH_URL, { headers, params });
-  return response.data; // { total_count, items: [...] }
+export const getUserDetails = async (username) => {
+  try {
+    const response = await fetch(`${BASE_URL}/users/${username}`);
+    if (!response.ok) {
+      throw new Error("Failed to fetch user details");
+    }
+    return await response.json();
+  } catch (error) {
+    console.error("Error getting user details:", error);
+    throw error;
+  }
 };
