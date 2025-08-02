@@ -2,16 +2,23 @@
 
 const BASE_URL = "https://api.github.com";
 
-export const searchUsers = async (query) => {
+export const searchUsers = async ({ username, location, minRepos }) => {
   try {
+    // Build advanced query string
+    let query = username || '';
+    if (location) query += `+location:${location}`;
+    if (minRepos) query += `+repos:>${minRepos}`;
+
     const response = await fetch(`${BASE_URL}/search/users?q=${query}`);
+    
     if (!response.ok) {
-      throw new Error("Failed to fetch users");
+      throw new Error("GitHub API request failed");
     }
+
     const data = await response.json();
-    return data.items; // GitHub API returns users under the "items" key
+    return data.items; // GitHub search API returns results in 'items'
   } catch (error) {
-    console.error("Error searching users:", error);
+    console.error("Advanced search error:", error);
     throw error;
   }
 };
@@ -20,11 +27,11 @@ export const getUserDetails = async (username) => {
   try {
     const response = await fetch(`${BASE_URL}/users/${username}`);
     if (!response.ok) {
-      throw new Error("Failed to fetch user details");
+      throw new Error("User fetch failed");
     }
     return await response.json();
   } catch (error) {
-    console.error("Error getting user details:", error);
+    console.error("User detail fetch error:", error);
     throw error;
   }
 };
