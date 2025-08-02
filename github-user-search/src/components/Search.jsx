@@ -9,6 +9,10 @@ const Search = () => {
   const [notFound, setNotFound] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const fetchUserData = async (username, location, minRepos) => {
+    return await searchUsers({ username, location, minRepos });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -16,7 +20,7 @@ const Search = () => {
     setUsers([]);
 
     try {
-      const data = await searchUsers({ username, location, minRepos });
+      const data = await fetchUserData(username, location, minRepos);
       if (data.total_count === 0) {
         setNotFound(true);
       } else {
@@ -56,7 +60,7 @@ const Search = () => {
       </form>
 
       {loading && <p>Loading...</p>}
-      {notFound && <p>Looks like we cant find the user</p>}
+      {notFound && <p>Looks like we can't find the user</p>}
 
       {users.length > 0 && (
         <ul>
