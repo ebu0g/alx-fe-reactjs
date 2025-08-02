@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const BASE_URL = 'https://api.github.com';
 
-// Fetch user by username (existing)
+// Existing function (do not remove)
 export const fetchUserData = async (username) => {
   const token = import.meta.env.VITE_GITHUB_TOKEN;
   const headers = token ? { Authorization: `token ${token}` } : {};
@@ -11,17 +11,17 @@ export const fetchUserData = async (username) => {
   return response.data;
 };
 
-// Advanced search function (new)
+// ADD THIS NEW FUNCTION to handle advanced user search:
 export const searchUsers = async ({ username, location, minRepos }) => {
   const token = import.meta.env.VITE_GITHUB_TOKEN;
   const headers = token ? { Authorization: `token ${token}` } : {};
 
-  // Build query string
+  // Build search query string for GitHub API
   let query = '';
   if (username) query += `${username} in:login`;
   if (location) query += ` location:${location}`;
   if (minRepos) query += ` repos:>=${minRepos}`;
 
   const response = await axios.get(`${BASE_URL}/search/users?q=${encodeURIComponent(query)}`, { headers });
-  return response.data; // this contains items[] array of users
+  return response.data;  // contains 'items' array with users
 };
