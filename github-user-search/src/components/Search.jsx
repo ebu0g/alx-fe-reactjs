@@ -2,47 +2,75 @@ import React, { useState } from 'react';
 import { searchUsers } from '../services/githubService';
 
 const Search = () => {
-  const [query, setQuery] = useState('');
-  const [results, setResults] = useState([]);
-  const [error, setError] = useState('');
+  const [username, setUsername] = useState('');
+  const [location, setLocation] = useState('');
+  const [minRepos, setMinRepos] = useState('');
+  const [users, setUsers] = useState([]);
+  const [notFound, setNotFound] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleSearch = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setNotFound(false);
+    setUsers([]);
+
     try {
-      const users = await searchUsers(query);
-      setResults(users);
-      setError('');
-    } catch (err) {
-      setError('Could not fetch users.');
+      const data = await searchUsers({ username, location, minRepos });
+      if (data.total_count === 0) {
+        setNotFound(true);
+      } else {
+        setUsers(data.items);
+      }
+    } catch (error) {
+      console.error(error);
+      setNotFound(true);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="p-4 max-w-xl mx-auto">
-      <input
-        type="text"
-        placeholder="Search GitHub users"
-        className="w-full p-2 border rounded"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-      />
-      <button
-        className="mt-2 px-4 py-2 bg-blue-600 text-white rounded"
-        onClick={handleSearch}
-      >
-        Search
-      </button>
+    <div className="search-container">
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          placeholder="GitHub username"
+        />
+        <input
+          type="text"
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+          placeholder="Location (optional)"
+        />
+        <input
+          type="number"
+          value={minRepos}
+          onChange={(e) => setMinRepos(e.target.value)}
+          placeholder="Min Repositories (optional)"
+          min="0"
+        />
+        <button type="submit">Search</button>
+      </form>
 
-      {error && <p className="text-red-500 mt-2">{error}</p>}
+      {loading && <p>Loading...</p>}
+      {notFound && <p>Looks like we cant find the user</p>}
 
-      <ul className="mt-4">
-        {results.map((user) => (
-          <li key={user.id} className="border-b py-2">
-            <a href={user.html_url} target="_blank" rel="noreferrer" className="text-blue-500">
-              {user.login}
-            </a>
-          </li>
-        ))}
-      </ul>
+      {users.length > 0 && (
+        <ul>
+          {users.map(user => (
+            <li key={user.id} style={{ marginBottom: '1rem' }}>
+              <img src={user.avatar_url} alt={user.login} width={50} />
+              <a href={user.html_url} target="_blank" rel="noopener noreferrer">
+                {user.login}
+              </a>
+              <p>Score: {user.score.toFixed(2)}</p>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };
