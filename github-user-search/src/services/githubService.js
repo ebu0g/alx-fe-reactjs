@@ -2,36 +2,25 @@
 
 const BASE_URL = "https://api.github.com";
 
-export const searchUsers = async ({ username, location, minRepos }) => {
+export const searchUsers = async ({ username = "", location = "", minRepos = "" }) => {
   try {
-    // Build advanced query string
-    let query = username || '';
+    let query = "";
+
+    if (username) query += `${username}`;
     if (location) query += `+location:${location}`;
     if (minRepos) query += `+repos:>${minRepos}`;
 
-    const response = await fetch(`${BASE_URL}/search/users?q=${query}`);
-    
+    const url = `${BASE_URL}/search/users?q=${encodeURIComponent(query)}`;
+
+    const response = await fetch(url);
     if (!response.ok) {
       throw new Error("GitHub API request failed");
     }
 
     const data = await response.json();
-    return data.items; // GitHub search API returns results in 'items'
+    return data.items || [];
   } catch (error) {
-    console.error("Advanced search error:", error);
-    throw error;
-  }
-};
-
-export const getUserDetails = async (username) => {
-  try {
-    const response = await fetch(`${BASE_URL}/users/${username}`);
-    if (!response.ok) {
-      throw new Error("User fetch failed");
-    }
-    return await response.json();
-  } catch (error) {
-    console.error("User detail fetch error:", error);
+    console.error("GitHub search failed:", error);
     throw error;
   }
 };
