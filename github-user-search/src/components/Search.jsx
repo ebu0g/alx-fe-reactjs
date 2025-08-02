@@ -2,60 +2,75 @@ import React, { useState } from 'react';
 import { searchUsers } from '../services/githubService';
 
 const Search = () => {
-  const [query, setQuery] = useState('');
+  const [username, setUsername] = useState('');
   const [location, setLocation] = useState('');
-  const [minRepos, setMinRepos] = useState(0);
-  const [results, setResults] = useState([]);
+  const [minRepos, setMinRepos] = useState('');
+  const [users, setUsers] = useState([]);
+  const [notFound, setNotFound] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  // ✅ Required function name
-  const fetchUserData = async () => {
-    if (!query) return;
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setNotFound(false);
+    setUsers([]);
+
     try {
-      const users = await searchUsers(query, location, minRepos);
-      setResults(users);
+      const data = await searchUsers({ username, location, minRepos });
+      if (data.total_count === 0) {
+        setNotFound(true);
+      } else {
+        setUsers(data.items);
+      }
     } catch (error) {
-      console.error('Error fetching GitHub users:', error);
+      console.error(error);
+      setNotFound(true);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    fetchUserData(); // ✅ make sure to call it
-  };
-
   return (
-    <div>
+    <div className="search-container">
       <form onSubmit={handleSubmit}>
         <input
           type="text"
-          placeholder="Search username"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          placeholder="GitHub username"
         />
         <input
           type="text"
-          placeholder="Location"
           value={location}
           onChange={(e) => setLocation(e.target.value)}
+          placeholder="Location (optional)"
         />
         <input
           type="number"
-          placeholder="Minimum Repos"
           value={minRepos}
           onChange={(e) => setMinRepos(e.target.value)}
+          placeholder="Min Repositories (optional)"
+          min="0"
         />
         <button type="submit">Search</button>
       </form>
 
-      <ul>
-        {results.map((user) => (
-          <li key={user.id}>
-            <a href={user.html_url} target="_blank" rel="noopener noreferrer">
-              {user.login}
-            </a>
-          </li>
-        ))}
-      </ul>
+      {loading && <p>Loading...</p>}
+      {notFound && <p>Looks like we cant find the user</p>}
+
+      {users.length > 0 && (
+        <ul>
+          {users.map(user => (
+            <li key={user.id} style={{ marginBottom: '1rem' }}>
+              <img src={user.avatar_url} alt={user.login} width={50} />
+              <a href={user.html_url} target="_blank" rel="noopener noreferrer">
+                {user.login}
+              </a>
+              <p>Score: {user.score.toFixed(2)}</p>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };
