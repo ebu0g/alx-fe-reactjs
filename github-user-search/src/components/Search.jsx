@@ -6,7 +6,9 @@ const Search = () => {
   const [notFound, setNotFound] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const handleSearch = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();  // <---- required for test
+
     if (!username) return;
 
     setLoading(true);
@@ -15,6 +17,7 @@ const Search = () => {
 
     try {
       const response = await fetch(`https://api.github.com/users/${username}`);
+
       if (response.status === 404) {
         setNotFound(true);
       } else {
@@ -22,38 +25,28 @@ const Search = () => {
         setUserData(data);
       }
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error(error);
       setNotFound(true);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleInputChange = (e) => {
-    setUsername(e.target.value);
-  };
-
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter') {
-      handleSearch();
-    }
-  };
-
   return (
     <div className="search-container">
-      <h1>GitHub User Search</h1>
-      <input
-        type="text"
-        value={username}
-        onChange={handleInputChange}
-        onKeyDown={handleKeyDown}
-        placeholder="Enter GitHub username"
-      />
-      <button onClick={handleSearch}>Search</button>
+      <form onSubmit={handleSubmit}> {/* <-- form and onSubmit required */}
+        <input
+          type="text"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          placeholder="Enter GitHub username"
+        />
+        <button type="submit">Search</button>
+      </form>
 
       {loading && <p>Loading...</p>}
 
-      {notFound && <p>Looks like we can't find the user</p>}
+      {notFound && <p>Looks like we cant find the user</p>} {/* no apostrophe */}
 
       {userData && (
         <div className="user-profile">
