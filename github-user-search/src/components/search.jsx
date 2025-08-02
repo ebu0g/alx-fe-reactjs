@@ -16,7 +16,7 @@ const Search = () => {
     try {
       const data = await fetchUserData(username);
       setUserData(data);
-    } catch (err) {
+    } catch {
       setError(true);
     } finally {
       setLoading(false);
@@ -35,7 +35,6 @@ const Search = () => {
         <button type="submit">Search</button>
       </form>
 
-      {/* Conditional Rendering */}
       {loading && <p>Loading...</p>}
       {error && <p>Looks like we can't find the user.</p>}
       {userData && (
