@@ -27,23 +27,23 @@ function RecipeDetail() {
         <h1 className="text-3xl font-bold mt-4 mb-2">{recipe.title}</h1>
         <p className="text-gray-700 mb-4">{recipe.summary}</p>
 
-        {/* Ingredients (mock example) */}
+        {/* Ingredients */}
         <div className="mb-4">
           <h2 className="text-2xl font-semibold mb-2">Ingredients</h2>
           <ul className="list-disc list-inside text-gray-700">
-            <li>Ingredient 1</li>
-            <li>Ingredient 2</li>
-            <li>Ingredient 3</li>
+            {recipe.ingredients.map((item, index) => (
+              <li key={index}>{item}</li>
+            ))}
           </ul>
         </div>
 
-        {/* Instructions (mock example) */}
+        {/* Instructions */}
         <div>
           <h2 className="text-2xl font-semibold mb-2">Instructions</h2>
           <ol className="list-decimal list-inside text-gray-700">
-            <li>Step 1: Do something.</li>
-            <li>Step 2: Do something else.</li>
-            <li>Step 3: Finish cooking.</li>
+            {recipe.instructions.map((step, index) => (
+              <li key={index}>{step}</li>
+            ))}
           </ol>
         </div>
       </div>
