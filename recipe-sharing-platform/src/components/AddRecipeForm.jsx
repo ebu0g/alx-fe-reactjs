@@ -9,13 +9,13 @@ function AddRecipeForm() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Simple validation
-    let validationErrors = {};
+    // Validation
+    const validationErrors = {};
     if (!title.trim()) validationErrors.title = "Title is required";
     if (!ingredients.trim()) validationErrors.ingredients = "Ingredients are required";
     if (!instructions.trim()) validationErrors.instructions = "Instructions are required";
-
-    // Example: ingredients must have at least 2 items
+    
+    // Ensure ingredients has at least 2 items
     if (ingredients.split(",").length < 2) validationErrors.ingredients = "Add at least two ingredients separated by commas";
 
     if (Object.keys(validationErrors).length > 0) {
@@ -23,11 +23,11 @@ function AddRecipeForm() {
       return;
     }
 
-    // If valid, print to console (or later post to API)
+    // Example: log new recipe (can later post to API)
     console.log({
       title,
-      ingredients: ingredients.split(",").map((i) => i.trim()),
-      instructions: instructions.split(".").map((i) => i.trim()).filter(Boolean)
+      ingredients: ingredients.split(",").map(i => i.trim()),
+      instructions: instructions.split(".").map(i => i.trim()).filter(Boolean)
     });
 
     // Reset form
@@ -39,8 +39,8 @@ function AddRecipeForm() {
   };
 
   return (
-    <div className="max-w-lg mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-4 text-center">Add a New Recipe</h2>
+    <div className="max-w-lg mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
+      <h2 className="text-2xl font-bold mb-6 text-center">Add a New Recipe</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Title */}
         <div>
