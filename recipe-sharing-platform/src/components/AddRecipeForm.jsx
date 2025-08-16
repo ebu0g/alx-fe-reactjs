@@ -3,19 +3,16 @@ import React, { useState } from "react";
 function AddRecipeForm() {
   const [title, setTitle] = useState("");
   const [ingredients, setIngredients] = useState("");
-  const [instructions, setInstructions] = useState("");
+  const [steps, setSteps] = useState("");
   const [errors, setErrors] = useState({});
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Validation
     const validationErrors = {};
     if (!title.trim()) validationErrors.title = "Title is required";
     if (!ingredients.trim()) validationErrors.ingredients = "Ingredients are required";
-    if (!instructions.trim()) validationErrors.instructions = "Instructions are required";
-    
-    // Ensure ingredients has at least 2 items
+    if (!steps.trim()) validationErrors.steps = "Steps are required";
     if (ingredients.split(",").length < 2) validationErrors.ingredients = "Add at least two ingredients separated by commas";
 
     if (Object.keys(validationErrors).length > 0) {
@@ -23,17 +20,15 @@ function AddRecipeForm() {
       return;
     }
 
-    // Example: log new recipe (can later post to API)
     console.log({
       title,
       ingredients: ingredients.split(",").map(i => i.trim()),
-      instructions: instructions.split(".").map(i => i.trim()).filter(Boolean)
+      steps: steps.split(".").map(i => i.trim()).filter(Boolean)
     });
 
-    // Reset form
     setTitle("");
     setIngredients("");
-    setInstructions("");
+    setSteps("");
     setErrors({});
     alert("Recipe submitted successfully!");
   };
@@ -42,7 +37,6 @@ function AddRecipeForm() {
     <div className="max-w-lg mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
       <h2 className="text-2xl font-bold mb-6 text-center">Add a New Recipe</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Title */}
         <div>
           <label className="block font-semibold mb-1">Title</label>
           <input
@@ -54,7 +48,6 @@ function AddRecipeForm() {
           {errors.title && <p className="text-red-500 text-sm mt-1">{errors.title}</p>}
         </div>
 
-        {/* Ingredients */}
         <div>
           <label className="block font-semibold mb-1">Ingredients (comma separated)</label>
           <textarea
@@ -66,19 +59,17 @@ function AddRecipeForm() {
           {errors.ingredients && <p className="text-red-500 text-sm mt-1">{errors.ingredients}</p>}
         </div>
 
-        {/* Instructions */}
         <div>
           <label className="block font-semibold mb-1">Preparation Steps (use periods to separate)</label>
           <textarea
             className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             rows="4"
-            value={instructions}
-            onChange={(e) => setInstructions(e.target.value)}
+            value={steps}
+            onChange={(e) => setSteps(e.target.value)}
           />
-          {errors.instructions && <p className="text-red-500 text-sm mt-1">{errors.instructions}</p>}
+          {errors.steps && <p className="text-red-500 text-sm mt-1">{errors.steps}</p>}
         </div>
 
-        {/* Submit */}
         <button
           type="submit"
           className="w-full bg-blue-500 text-white font-semibold py-2 rounded hover:bg-blue-600 transition-colors"
