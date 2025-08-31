@@ -1,30 +1,36 @@
-// src/components/RegistrationForm.jsx
 import React, { useState } from "react";
 
 const RegistrationForm = () => {
-  // Separate states for each field
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [errors, setErrors] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Basic validation
-    if (!username || !email || !password) {
-      setError("All fields are required!");
+    // Basic validation logic
+    if (!username) {
+      setErrors("Username is required");
+      return;
+    }
+    if (!email) {                     // ✅ explicit check
+      setErrors("Email is required");
+      return;
+    }
+    if (!password) {                  // ✅ explicit check
+      setErrors("Password is required");
       return;
     }
 
-    setError("");
+    setErrors(""); // ✅ use setErrors
     console.log("Submitted Data:", { username, email, password });
 
     // mock API call
     fetch("https://jsonplaceholder.typicode.com/users", {
       method: "POST",
       body: JSON.stringify({ username, email, password }),
-      headers: { "Content-Type": "application/json" }
+      headers: { "Content-Type": "application/json" },
     })
       .then((res) => res.json())
       .then((data) => {
@@ -37,14 +43,14 @@ const RegistrationForm = () => {
   return (
     <div>
       <h2>Controlled Registration Form</h2>
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {errors && <p style={{ color: "red" }}>{errors}</p>}
       <form onSubmit={handleSubmit}>
         <div>
           <label>Username:</label>
           <input
             type="text"
             name="username"
-            value={username}   // ✅ explicit value
+            value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
         </div>
@@ -54,7 +60,7 @@ const RegistrationForm = () => {
           <input
             type="email"
             name="email"
-            value={email}   // ✅ explicit value
+            value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
         </div>
@@ -64,7 +70,7 @@ const RegistrationForm = () => {
           <input
             type="password"
             name="password"
-            value={password}   // ✅ explicit value
+            value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
